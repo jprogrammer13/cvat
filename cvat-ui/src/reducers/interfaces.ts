@@ -367,6 +367,12 @@ export interface AnnotationState {
     sidebarCollapsed: boolean;
     appearanceCollapsed: boolean;
     tabContentHeight: number;
+    workspace: Workspace;
+}
+
+export enum Workspace {
+    STANDARD = 'Standard',
+    ATTRIBUTE_ANNOTATION = 'Attribute annotation',
 }
 
 export enum GridColor {

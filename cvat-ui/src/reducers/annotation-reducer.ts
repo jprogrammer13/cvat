@@ -12,6 +12,7 @@ import {
     ActiveControl,
     ShapeType,
     ObjectType,
+    Workspace,
 } from './interfaces';
 
 const defaultState: AnnotationState = {
@@ -88,6 +89,7 @@ const defaultState: AnnotationState = {
     sidebarCollapsed: false,
     appearanceCollapsed: false,
     tabContentHeight: 0,
+    workspace: Workspace.ATTRIBUTE_ANNOTATION,
 };
 
 export default (state = defaultState, action: AnyAction): AnnotationState => {
@@ -1039,6 +1041,44 @@ export default (state = defaultState, action: AnyAction): AnnotationState => {
                         cur: max + 1,
                     },
                 },
+            };
+        }
+        case AnnotationActionTypes.ACTIVATE_NEXT: {
+            const { step } = action.payload;
+            const { states } = state.annotations;
+            const currentActivated = state.annotations.activatedStateID;
+
+            let newActivated = null;
+            if (currentActivated === null) {
+                if (states.length) {
+                    newActivated = state.annotations.states[0].clientID;
+                }
+            } else {
+                const index = states
+                    .map((objectState: any): number => objectState.clientID)
+                    .indexOf(currentActivated);
+                let newIndex = index + step;
+                if (newIndex < 0) {
+                    newIndex = states[states.length - 1].clientID;
+                } else if (newIndex >= states.length) {
+                    newIndex = 0;
+                }
+                newActivated = states[newIndex].clientID;
+            }
+
+            return {
+                ...state,
+                annotations: {
+                    ...state.annotations,
+                    activatedStateID: newActivated,
+                },
+            };
+        }
+        case AnnotationActionTypes.CHANGE_WORKSPACE: {
+            const { workspace } = action.payload;
+            return {
+                ...state,
+                workspace,
             };
         }
         case AnnotationActionTypes.RESET_CANVAS: {
